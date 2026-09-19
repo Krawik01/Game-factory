@@ -77,7 +77,7 @@ Mute overhead shot: factory about to lock → one tap rewires **everything** →
 
 **Forbidden:** store, settings, polished menus, hundreds of levels, economy, production ads, unused Core managers.
 
-**Unity:** only after LTS is installed and the project is created **in the Editor**. Game code in `Assets/Games/DockRush/`. Stage 3 Core allowed only if used: GameFlowManager, AnalyticsManager (editor sink), LevelManager.
+**Unity:** only after LTS is installed and the project is created **in the Editor**. Game code in `Assets/Games/DockRush/`. **First playable (Stage 3):** follow [../../../design/dock-rush/PROTO.md](../../../design/dock-rush/PROTO.md) — **no GameFactoryCore** until a vertical slice is justified.
 
 ## Kill question
 
