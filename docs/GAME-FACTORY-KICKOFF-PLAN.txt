@@ -1,0 +1,179 @@
+GAME FACTORY — FULL KICKOFF PLAN
+================================
+
+CURRENT STATE
+- Repo: README only, single commit on main
+- Brak Unity, GameFactoryCore, knowledge base
+
+STRUKTURA REPO (docelowo)
+/workspace/README.md
+/workspace/docs/knowledge-base/INDEX.md
+/workspace/docs/knowledge-base/market/
+/workspace/docs/knowledge-base/concepts/
+/workspace/unity/GameFactory/
+  Packages/manifest.json
+  ProjectSettings/
+  Assets/GameFactoryCore/
+  Assets/_GameTemplate/
+  Assets/Games/
+
+Unity: 2022.3 LTS, Android first
+GameFactoryCore = tylko infrastruktura
+Assets/Games/<Codename> = mechanika gry
+
+
+CZĘŚĆ A — TECH BOOTSTRAP (GameFactoryCore)
+
+Moduły (v1):
+- AdsManager — test mode, rewarded/interstitial, failure callbacks
+- AnalyticsManager — LogEvent(name, dict), dev console
+- SaveManager — JSON, persistentDataPath, version
+- AudioManager — SFX pool, muzyka, mute prefs
+- HapticsManager — Android vibrate, no-op fallback
+- GameFlowManager — Boot, Menu, Playing, Win, Lose, Pause
+- LevelManager — SO/JSON, attempt counter
+- EconomyManager — stub soft currency
+- ConsentManager — placeholder UMP
+- RemoteConfigManager — local JSON + interface
+- IAPManager — interface only
+- SceneLoader — async load
+- DebugMenu — DEVELOPMENT_BUILD: skip level, ad test, clear save
+
+Cross-cutting:
+- GameFactoryCore.asmdef
+- GameBootstrap prefab w _GameTemplate
+- Stałe nazw eventów analytics (first_open, level_start, ...)
+- Android min API 24+, portrait
+
+Acceptance:
+- Unity otwiera bez błędów kompilacji
+- _GameTemplate: boot → tap to play → fake win/lose + log eventów
+- MockAdsProvider, bez SDK na start
+
+Ryzyko: weryfikacja compile/play u founder lokalnie
+
+
+CZĘŚĆ B — KNOWLEDGE BASE
+
+docs/knowledge-base/INDEX.md:
+- Active pipeline
+- Tested concepts
+- Reusable modules
+- Lessons learned
+- Metrics benchmarks
+
+Linki: market/2026-09-market-opportunity.md, dock-rush-spec.md
+
+
+CZĘŚĆ C — STAGE 0 MARKET (Sep 2026)
+
+Sygnały:
+- Hybrid-casual puzzle: sort zatłoczony, nadal IAA + IAP
+- Konwergencja: instant loop + lekki meta (streak, kolekcje)
+- Shorts: conveyor, one board many goals
+- Nie klonować Color Sort — własna mechanika + prezentacja
+- Prototype dni, vertical slice tygodnie, setki leveli z danych
+
+Teza: fuzje obok sort/block, czytelne w <2s wideo, szybki kill/continue
+
+
+CZĘŚĆ D — STAGE 1 IDEATION (4 koncepty, score 1-10, średnia = overall)
+
+DOCK RUSH — overall 8.0 (PIERWSZY PROTOTYP)
+Pitch: Kolorowe skrzynki na taśmie; obracasz doki, dopasowujesz zatoki zanim zatka.
+Differentiator: traffic + color, 2D top-down, bez 3D screw.
+Instant understandability: 9
+Core-loop satisfaction: 8
+Replayability: 8
+Level scalability: 9
+Short-form video: 9
+Rewarded ads: 9
+Technical simplicity: 8
+Production speed: 8
+Visual distinctiveness: 7
+Expansion potential: 7
+
+TILT SORT — overall 7.4 (backup)
+Pitch: Przechyl tacę, kulki w bramki kolorów.
+Differentiator: sort bez tube/stack clone.
+Uwaga: physics na słabszym Androidzie.
+
+FUSE LINE — overall 7.1
+Pitch: Jedna linia lontu — łącz ładunki w kolejności.
+Differentiator: sequence puzzle, nie match-3.
+
+STACK PULSE — overall 6.6
+Pitch: Bloki na beat; złe tempo chwieje wieżę.
+Uwaga: ryzyko unfair rhythm.
+
+Rekomendacja: Dock Rush first, Tilt Sort jeśli kill.
+
+
+CZĘŚĆ E — STAGE 2 SPEC: DOCK RUSH v0.1
+
+One-sentence: Obracaj doki, prowadź skrzynki w zatoki zanim taśma się zatka.
+
+Core: spawn na belt, tap dock = obrót 90°
+
+Objective: posortuj N skrzynek
+
+Loss: backlog > limit (timer opcjonalnie później)
+
+Win: wszystkie posortowane, opcjonalna gwiazdka bez jam
+
+Controls: jedna ręka, tap (prototype), swipe w polish
+
+30s loop: skrzynka → obrót → slot-in → napięcie jam → clear
+
+Progression: co ~5 leveli multi-color, split docks, blokady
+
+Difficulty: spawn rate, więcej doków, unknown crates
+
+Visual: toy factory, kontrastowe kolory, juice przy slot-in
+
+Monetization (później): rewarded +3 slot backlog lub undo; interstitial między levelami
+
+Replay: one more fix, gwiazdki, ciekawy layout
+
+Shorts hook: near-jam → jeden obrót ratuje → cascade slot-in
+
+Prototype Stage 3:
+- 1 scena, 5-10 leveli JSON/SO
+- win/lose/restart only
+- bez sklepu, bez prawdziwych reklam
+- Kill question: czy obrót doków jest napięty i satysfakcjonujący 3+ min?
+
+
+CZĘŚĆ F — KOLEJNOŚĆ WYKONANIA
+
+1. Branch cursor/game-factory-kickoff-65cf
+2. docs + Stage 0 report + scorecards + dock-rush spec
+3. unity/GameFactory + Core stubs + _GameTemplate
+4. README update
+5. commit, push, draft PR
+6. Founder: otwórz unity/GameFactory, compile, play template
+7. Następny sprint: Stage 3 DockRush w Assets/Games/DockRush/
+
+
+DECISION BLOCK
+
+DECISION: CONTINUE → Stage 3 prototype Dock Rush po bootstrap
+
+WHY: instant read, one-hand, jam tension, rewarded revive, levels bez backendu
+
+BUILD: Core skeleton + KB + spec + potem 5-10 leveli prototypu
+
+MEASURE: playtest founder fun >=7/10 przy 10 min; 3+ restarty; near-miss moments
+
+KILL: obrót fiddly/nudny do level 5; brak chęci retry po fail
+
+NEXT ACTION: merge kickoff → core loop Dock Rush
+
+
+TO-DO
+[ ] docs/knowledge-base INDEX + market report + scorecards
+[ ] dock-rush-spec.md pełny
+[ ] unity/GameFactory shell
+[ ] GameFactoryCore stubs
+[ ] _GameTemplate scene
+[ ] README + PR
