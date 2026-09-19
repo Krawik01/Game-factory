@@ -20,24 +20,19 @@ The founder is the final decision-maker.
 
 | Field | Value |
 |-------|--------|
-| Codename | **Dock Rush** |
-| Stage | 2 — Concept spec |
-| Status | Pending founder gut-check of the unique shared-graph rule |
-| Spec | [docs/knowledge-base/concepts/dock-rush-spec.md](docs/knowledge-base/concepts/dock-rush-spec.md) |
+| Codename | **Dock Rush** (Candidate #001, **hypothesis**) |
+| Stage | **3 — Prototype prep** (no Unity in repo yet) |
+| Stage 2 spec | [docs/knowledge-base/concepts/dock-rush-spec.md](docs/knowledge-base/concepts/dock-rush-spec.md) |
+| Stage 3 pack | [design/dock-rush/PROTO.md](design/dock-rush/PROTO.md) + [levels](design/dock-rush/levels/) |
 | Backup | Tilt Sort (see [ideation](docs/knowledge-base/concepts/2026-09-ideation.md)) |
 
-If the unique rule fails founder review, do not protect Dock Rush. Run the backup through the same OS.
+Gameplay code starts only after you create a Unity project in the Editor. See **Unity setup** in `design/dock-rush/PROTO.md`.
 
 ## When Unity is allowed
 
-Unity is **not** in this repository yet. The founder has not installed an editor.
+There is still **no** Unity project in this repository. Stage 3 Dock Rush uses **no GameFactoryCore** — only `Assets/Games/DockRush/` after you create the project.
 
-When a Unity LTS is installed:
-
-1. Create the project **inside the Editor** (File → New Project). Do not hand-author `ProjectSettings`.
-2. Add GameFactoryCore modules only in the sprint they are first used.
-3. Follow [docs/knowledge-base/tech/GAMEFACTORY_CORE_ROADMAP.md](docs/knowledge-base/tech/GAMEFACTORY_CORE_ROADMAP.md).
-4. Start Stage 3 only after Stage 2 is approved.
+When Unity LTS is installed: follow [design/dock-rush/PROTO.md](design/dock-rush/PROTO.md) → **Unity setup (founder)**. Do not hand-author `ProjectSettings` before opening the project once in the Editor.
 
 Default platform is Android. iOS waits for traction. No backend by default.
 

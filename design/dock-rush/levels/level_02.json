@@ -1,0 +1,17 @@
+{
+  "id": 2,
+  "name": "Wrong Way",
+  "hubs": [{ "id": "h0", "position": [2, 2], "rotation": 2 }],
+  "nodes": [
+    { "id": "spawn", "type": "spawn", "position": [0, 2] },
+    { "id": "b0", "type": "bay", "position": [4, 2], "acceptColor": "Red", "acceptFacing": "West" },
+    { "id": "pit", "type": "sink", "position": [2, 4] }
+  ],
+  "edges": [
+    { "from": "spawn", "to": "h0", "hub": null },
+    { "from": "h0", "to": "b0", "hub": "h0", "activeAtRotation": [0, 1] },
+    { "from": "h0", "to": "pit", "hub": "h0", "activeAtRotation": [2, 3] }
+  ],
+  "queue": [{ "color": "Red", "facing": "East" }],
+  "tickSeconds": 0.4
+}

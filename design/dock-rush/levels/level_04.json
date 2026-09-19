@@ -1,0 +1,19 @@
+{
+  "id": 4,
+  "name": "Facing Check",
+  "hubs": [{ "id": "h0", "position": [2, 2], "rotation": 1 }],
+  "nodes": [
+    { "id": "spawn", "type": "spawn", "position": [0, 2] },
+    { "id": "b0", "type": "bay", "position": [4, 2], "acceptColor": "Green", "acceptFacing": "West" },
+    { "id": "b1", "type": "bay", "position": [4, 0], "acceptColor": "Green", "acceptFacing": "South" },
+    { "id": "pit", "type": "sink", "position": [2, 4] }
+  ],
+  "edges": [
+    { "from": "spawn", "to": "h0", "hub": null },
+    { "from": "h0", "to": "b0", "hub": "h0", "activeAtRotation": [0, 1] },
+    { "from": "h0", "to": "b1", "hub": "h0", "activeAtRotation": [2] },
+    { "from": "h0", "to": "pit", "hub": "h0", "activeAtRotation": [3] }
+  ],
+  "queue": [{ "color": "Green", "facing": "East" }],
+  "tickSeconds": 0.35
+}

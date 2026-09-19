@@ -6,13 +6,13 @@ Living memory. Read this before designing a new game. Update it after every Stag
 
 | Codename | Stage | Last decision | Artifact |
 |----------|-------|---------------|----------|
-| Dock Rush | 2 — Concept spec | CONTINUE OS / pending founder gut-check of unique rule | [concepts/dock-rush-spec.md](concepts/dock-rush-spec.md) |
+| Dock Rush | 3 — Prototype prep (hypothesis) | CONTINUE to playable experiment; no Unity in repo | [../../design/dock-rush/PROTO.md](../../design/dock-rush/PROTO.md) |
 
 ## Tested concepts
 
 | Codename | Stage reached | Decision | Notes |
 |----------|---------------|----------|--------|
-| Dock Rush | 2 | Pending | First practice bet. Not playtested. |
+| Dock Rush | 3 prep | Hypothesis | JSON levels authored; gameplay not implemented |
 | Tilt Sort | 1 | Backup | See [2026-09-ideation.md](concepts/2026-09-ideation.md) |
 | Fuse Line | 1 | Not recommended | |
 | Stack Pulse | 1 | Not recommended | Fairness / tuning risk |
