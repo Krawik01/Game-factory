@@ -1,7 +1,7 @@
 # Dock Rush — Stage 3 prototype pack (Candidate #001)
 
-**Status:** KILLED (2026-09-20) — first browser playtest: fun 2/10; goal and decisions were not immediately clear.
-**Purpose:** Archived cheapest playable experiment for the shared-graph mechanic. Do not add content or polish; see the playtest lesson below.
+**Status:** ITERATE (2026-09-20) — first browser playtest: fun 2/10; goal and decisions were not immediately clear.
+**Purpose:** One focused redesign of the shared-graph loop. Do not add content or polish to the current auto-run version; see the playtest lesson below.
 **Stage 2 source:** [../../docs/knowledge-base/concepts/dock-rush-spec.md](../../docs/knowledge-base/concepts/dock-rush-spec.md)
 
 No Unity project exists in this repo yet. The small browser proof at [../../prototype/dock-rush-web/](../../prototype/dock-rush-web/) is allowed solely to test the mechanic before the Editor is available; it is not a second product or a replacement for the Unity prototype.
@@ -168,7 +168,7 @@ See committed [levels/](levels/) for six authored levels.
 
 ## 4. Prototype success / kill gate
 
-**Result (2026-09-20): KILL.** One first-player browser session reported that the goal was not immediately understandable, the levels felt weak, and fun was **2/10**. This trips the locked kill gate for meaningful decisions / retry urge. The next experiment must use a different core loop, not more Dock Rush content.
+**Result (2026-09-20): ITERATE.** One first-player browser session reported that the goal was not immediately understandable, the levels felt weak, and fun was **2/10**. The current auto-run implementation is rejected. Run one focused turn-based shared-graph redesign before deciding whether to kill the core.
 
 Answer after founder playtest (~10 minutes, all levels). Use [PLAYTEST_LOG](../../docs/templates/PLAYTEST_LOG.md).
 

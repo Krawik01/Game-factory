@@ -2,7 +2,7 @@
 
 **Date:** 2026-09-20  
 **Build:** browser mechanic prototype (`8951c28`)  
-**Decision:** KILL
+**Decision:** ITERATE
 
 ## Evidence
 
@@ -12,15 +12,15 @@
 
 ## Lesson
 
-The shared-graph pitch did not become an obvious, satisfying decision loop in its smallest playable form. A rotating hub changed routes, but the player did not get a clear enough before/after payoff to make the action feel good. Do not try to rescue this with more levels, art, progression, ads, or a Unity port.
+The shared-graph pitch did not become an obvious, satisfying decision loop in its smallest playable form. A rotating hub changed routes, but the player did not get a clear enough before/after payoff to make the action feel good. Do not rescue the current auto-run version with more levels, art, progression, ads, or a Unity port.
 
 ## Decision
 
 ```text
-DECISION: KILL
-WHY: The first playable scored 2/10 and was not immediately understandable.
-BUILD: No further Dock Rush content. Keep the browser prototype only as a reference implementation.
-MEASURE: A new candidate must reach at least 7/10 fun and be explainable without instructions in its first short playtest.
-KILL CONDITION: Fun <=5/10 or unclear core goal in the first session.
-NEXT ACTION: Select and prototype a different Stage 1 candidate.
+DECISION: ITERATE
+WHY: The core may fit a logic-strategy game, but the auto-run version hid cause/effect and scored 2/10.
+BUILD: One turn-based shared-graph board: visible route previews, a small action budget, then an explicit Run step.
+MEASURE: Player can state the goal before acting and rates the new board >=7/10 after a short test.
+KILL CONDITION: Fun <=5/10 or unclear goal again in the first session.
+NEXT ACTION: Build one browser decision-board prototype, not a new six-level pack.
 ```
