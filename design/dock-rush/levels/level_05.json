@@ -1,0 +1,23 @@
+{
+  "id": 5,
+  "name": "Two Hubs",
+  "hubs": [
+    { "id": "h0", "position": [1, 2], "rotation": 0 },
+    { "id": "h1", "position": [3, 2], "rotation": 0 }
+  ],
+  "nodes": [
+    { "id": "spawn", "type": "spawn", "position": [0, 2] },
+    { "id": "mid", "type": "junction", "position": [2, 2] },
+    { "id": "b0", "type": "bay", "position": [4, 2], "acceptColor": "Blue", "acceptFacing": "East" },
+    { "id": "pit", "type": "sink", "position": [3, 4] }
+  ],
+  "edges": [
+    { "from": "spawn", "to": "h0", "hub": null },
+    { "from": "h0", "to": "mid", "hub": "h0", "activeAtRotation": [0, 1, 2, 3] },
+    { "from": "mid", "to": "h1", "hub": null },
+    { "from": "h1", "to": "b0", "hub": "h1", "activeAtRotation": [0, 1] },
+    { "from": "h1", "to": "pit", "hub": "h1", "activeAtRotation": [2, 3] }
+  ],
+  "queue": [{ "color": "Blue", "facing": "East" }],
+  "tickSeconds": 0.35
+}
