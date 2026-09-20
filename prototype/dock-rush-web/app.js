@@ -3,219 +3,121 @@ const context = canvas.getContext('2d');
 const levelName = document.querySelector('#level-name');
 const status = document.querySelector('#status');
 const queueLabel = document.querySelector('#queue');
+const rotate = document.querySelector('#rotate');
+const run = document.querySelector('#run');
+const restart = document.querySelector('#restart');
 const overlay = document.querySelector('#overlay');
 const result = document.querySelector('#result');
 const primaryAction = document.querySelector('#primary-action');
-const restart = document.querySelector('#restart');
 
-const palette = { Red: '#ef5a63', Green: '#63d788', Blue: '#62a7f8', Yellow: '#f7d154' };
-const directions = { North: '↑', East: '→', South: '↓', West: '←' };
-const levelUrls = Array.from({ length: 6 }, (_, index) => `../../design/dock-rush/levels/level_${String(index + 1).padStart(2, '0')}.json`);
+const palette = { Red: '#ef5a63', Blue: '#62a7f8' };
+const boards = [
+  { name: 'One Shared Switch', rotation: 1, actions: 1, west: 'Red', north: 'Blue', east: 'Red', south: 'Blue', hint: 'Both crates need one shared rotation. Watch the ghost routes change together.' },
+  { name: 'Trade-off Check', rotation: 1, actions: 1, west: 'Blue', north: 'Red', east: 'Red', south: 'Blue', hint: 'This time, rotating would make both routes worse. Read the board, then run.' }
+];
 
-let levels = [];
-let levelIndex = 0;
-let game = null;
-let lastTick = 0;
+let boardIndex = 0;
+let game;
 let scale = 1;
 let offset = { x: 0, y: 0 };
+
+function point(x, y) { return { x: offset.x + x * scale + scale / 2, y: offset.y + y * scale + scale / 2 }; }
 
 function resize() {
   const rect = canvas.getBoundingClientRect();
   const ratio = window.devicePixelRatio || 1;
-  canvas.width = Math.round(rect.width * ratio);
-  canvas.height = Math.round(rect.height * ratio);
+  canvas.width = Math.round(rect.width * ratio); canvas.height = Math.round(rect.height * ratio);
   context.setTransform(ratio, 0, 0, ratio, 0, 0);
-  const width = rect.width;
-  const height = rect.height;
-  scale = Math.min(width / 5, height / 6);
-  offset = { x: (width - scale * 5) / 2, y: (height - scale * 5) / 2 + scale * .5 };
+  scale = Math.min(rect.width / 5, rect.height / 5.4);
+  offset = { x: (rect.width - scale * 5) / 2, y: (rect.height - scale * 5) / 2 };
   draw();
 }
 
-function cloneLevel(level) {
-  return JSON.parse(JSON.stringify(level));
-}
-
-function startLevel(index) {
-  levelIndex = index;
-  const level = cloneLevel(levels[index]);
-  const allNodes = [...level.nodes, ...level.hubs.map(hub => ({ ...hub, type: 'hub' }))];
-  game = {
-    level,
-    nodes: new Map(allNodes.map(node => [node.id, node])),
-    hubs: new Map(level.hubs.map(hub => [hub.id, hub])),
-    queue: [...level.queue],
-    crate: null,
-    state: 'playing',
-    armed: false,
-    message: 'Tap a hub to rewire the belts.',
-    startedAt: performance.now(),
-  };
-  levelName.textContent = `Level ${level.id}: ${level.name}`;
+function start(index) {
+  boardIndex = index;
+  const board = boards[index];
+  game = { ...board, actionsLeft: board.actions, state: 'planning' };
+  levelName.textContent = `Test ${index + 1}: ${board.name}`;
+  status.textContent = board.hint;
   overlay.classList.add('hidden');
-  lastTick = performance.now();
-  updateHud();
-  draw();
+  updateHud(); draw();
 }
 
-function activeEdge(edge) {
-  if (!edge.hub) return true;
-  const hub = game.hubs.get(edge.hub);
-  return hub && edge.activeAtRotation.includes(hub.rotation);
-}
-
-function outgoing(nodeId) {
-  return game.level.edges.filter(edge => edge.from === nodeId && activeEdge(edge));
-}
-
-function finish(state, message) {
-  game.state = state;
-  game.message = message;
-  result.textContent = message;
-  primaryAction.textContent = state === 'won' && levelIndex < levels.length - 1 ? 'Next level' : state === 'won' ? 'Play again' : 'Try again';
-  overlay.classList.remove('hidden');
-  updateHud();
-}
-
-function tick(now) {
-  if (!game || game.state !== 'playing' || !game.armed) return;
-  if (now - game.startedAt < 850) return;
-  if (now - lastTick < game.level.tickSeconds * 1000) return;
-  lastTick = now;
-
-  if (!game.crate) {
-    if (game.queue.length === 0) {
-      finish('won', 'Dock cleared. Nice recovery.');
-      return;
-    }
-    game.crate = { ...game.queue.shift(), nodeId: 'spawn' };
-    game.message = 'Crate entered the graph.';
-    updateHud();
-    return;
-  }
-
-  const edges = outgoing(game.crate.nodeId);
-  if (edges.length !== 1) {
-    finish('lost', 'Graph locked. No route remains.');
-    return;
-  }
-  const target = game.nodes.get(edges[0].to);
-  game.crate.nodeId = target.id;
-  if (target.type === 'sink') {
-    finish('lost', 'Dead end. The dock locked up.');
-    return;
-  }
-  if (target.type === 'bay') {
-    if (target.acceptColor === game.crate.color && target.acceptFacing === game.crate.facing) {
-      game.crate = null;
-      game.message = 'Perfect fit.';
-      updateHud();
-      return;
-    }
-    finish('lost', 'Wrong bay orientation. The graph locked.');
-  }
-}
-
-function point(position) {
-  return { x: offset.x + position[0] * scale + scale / 2, y: offset.y + position[1] * scale + scale / 2 };
-}
-
-function drawArrow(x1, y1, x2, y2, color, active) {
-  context.strokeStyle = active ? color : '#3c4a68';
-  context.lineWidth = active ? 8 : 4;
-  context.setLineDash(active ? [] : [7, 8]);
-  context.beginPath(); context.moveTo(x1, y1); context.lineTo(x2, y2); context.stroke();
-  context.setLineDash([]);
-  if (!active) return;
-  const angle = Math.atan2(y2 - y1, x2 - x1);
-  context.fillStyle = color;
-  context.save(); context.translate(x2, y2); context.rotate(angle); context.beginPath(); context.moveTo(0, 0); context.lineTo(-16, -9); context.lineTo(-16, 9); context.closePath(); context.fill(); context.restore();
-}
-
-function drawNode(node) {
-  const { x, y } = point(node.position);
-  if (node.type === 'hub') {
-    context.fillStyle = '#60739e';
-    context.fillRect(x - scale * .32, y - scale * .32, scale * .64, scale * .64);
-    context.strokeStyle = '#c9d7ff'; context.lineWidth = 3; context.strokeRect(x - scale * .32, y - scale * .32, scale * .64, scale * .64);
-    context.fillStyle = '#fff'; context.font = `800 ${Math.max(17, scale * .28)}px system-ui`; context.textAlign = 'center'; context.textBaseline = 'middle';
-    context.fillText('↻', x, y + 1);
-    return;
-  }
-  if (node.type === 'bay') {
-    context.strokeStyle = palette[node.acceptColor]; context.lineWidth = 7;
-    context.strokeRect(x - scale * .3, y - scale * .3, scale * .6, scale * .6);
-    context.fillStyle = '#111a2d'; context.fillRect(x - scale * .22, y - scale * .22, scale * .44, scale * .44);
-    context.fillStyle = palette[node.acceptColor]; context.font = `800 ${Math.max(14, scale * .22)}px system-ui`; context.textAlign = 'center'; context.textBaseline = 'middle';
-    context.fillText(directions[node.acceptFacing], x, y);
-    return;
-  }
-  context.fillStyle = node.type === 'sink' ? '#5a3045' : '#34415e';
-  context.beginPath(); context.arc(x, y, scale * .22, 0, Math.PI * 2); context.fill();
-  context.fillStyle = '#b9c7e9'; context.font = `700 ${Math.max(10, scale * .14)}px system-ui`; context.textAlign = 'center'; context.textBaseline = 'middle';
-  context.fillText(node.type === 'spawn' ? 'IN' : node.type === 'sink' ? '×' : '•', x, y);
-}
-
-function drawCrate() {
-  if (!game?.crate) return;
-  const node = game.nodes.get(game.crate.nodeId);
-  const { x, y } = point(node.position);
-  context.fillStyle = palette[game.crate.color];
-  context.fillRect(x - scale * .18, y - scale * .18, scale * .36, scale * .36);
-  context.fillStyle = '#17213a'; context.font = `900 ${Math.max(16, scale * .25)}px system-ui`; context.textAlign = 'center'; context.textBaseline = 'middle';
-  context.fillText(directions[game.crate.facing], x, y + 1);
-}
-
-function draw() {
-  const width = canvas.getBoundingClientRect().width;
-  const height = canvas.getBoundingClientRect().height;
-  context.clearRect(0, 0, width, height);
-  if (!game) return;
-  context.fillStyle = '#18233b'; context.fillRect(0, 0, width, height);
-  for (const edge of game.level.edges) {
-    const from = game.nodes.get(edge.from); const to = game.nodes.get(edge.to);
-    const a = point(from.position); const b = point(to.position);
-    drawArrow(a.x, a.y, b.x, b.y, '#9db5e5', activeEdge(edge));
-  }
-  for (const node of game.nodes.values()) drawNode(node);
-  drawCrate();
+function routes() {
+  return game.rotation === 0
+    ? [{ from: 'west', to: 'east' }, { from: 'north', to: 'south' }]
+    : [{ from: 'west', to: 'south' }, { from: 'north', to: 'east' }];
 }
 
 function updateHud() {
+  const rotationText = game.rotation === 0 ? 'left → right · top → bottom' : 'left → bottom · top → right';
+  queueLabel.textContent = `Switch: ${rotationText} · rotations left: ${game.actionsLeft}`;
+  rotate.disabled = game.state !== 'planning' || game.actionsLeft === 0;
+  run.disabled = game.state !== 'planning';
+}
+
+function rotateHub() {
+  if (game.state !== 'planning' || game.actionsLeft === 0) return;
+  game.rotation = game.rotation === 0 ? 1 : 0;
+  game.actionsLeft -= 1;
+  status.textContent = 'One rotation rewired both routes. Check who now reaches which dock.';
+  updateHud(); draw();
+}
+
+function finish(won, message) {
+  game.state = won ? 'won' : 'lost';
+  status.textContent = message; result.textContent = message;
+  primaryAction.textContent = won && boardIndex < boards.length - 1 ? 'Next test' : won ? 'Play again' : 'Try again';
+  overlay.classList.remove('hidden'); updateHud(); draw();
+}
+
+function runRoutes() {
+  if (game.state !== 'planning') return;
+  const failed = routes().map(route => ({ crate: game[route.from], dock: game[route.to] })).find(item => item.crate !== item.dock);
+  if (failed) return finish(false, `${failed.crate} crate hit a ${failed.dock} dock. You could see that before running.`);
+  finish(true, 'Both routes landed. One decision solved two deliveries.');
+}
+
+function line(a, b, color) {
+  context.strokeStyle = color; context.lineWidth = 9; context.lineCap = 'round'; context.setLineDash([13, 10]);
+  context.beginPath(); context.moveTo(a.x, a.y); context.lineTo(b.x, b.y); context.stroke(); context.setLineDash([]);
+}
+
+function crate(position, color, label) {
+  const p = point(...position);
+  context.fillStyle = palette[color]; context.fillRect(p.x - scale * .2, p.y - scale * .2, scale * .4, scale * .4);
+  context.fillStyle = '#14203a'; context.font = `800 ${Math.max(11, scale * .14)}px system-ui`; context.textAlign = 'center'; context.textBaseline = 'middle'; context.fillText(label, p.x, p.y + 1);
+}
+
+function dock(position, color, label) {
+  const p = point(...position);
+  context.strokeStyle = palette[color]; context.lineWidth = 7; context.strokeRect(p.x - scale * .3, p.y - scale * .3, scale * .6, scale * .6);
+  context.fillStyle = palette[color]; context.font = `800 ${Math.max(11, scale * .14)}px system-ui`; context.textAlign = 'center'; context.textBaseline = 'middle'; context.fillText(label, p.x, p.y + 1);
+}
+
+function draw() {
   if (!game) return;
-  status.textContent = game.message;
-  const colors = [game.crate, ...game.queue].filter(Boolean).map(crate => `<span style="color:${palette[crate.color]}">■</span>`).join(' ');
-  queueLabel.innerHTML = colors ? `Queue ${colors}` : 'Queue clear';
+  const rect = canvas.getBoundingClientRect(); context.clearRect(0, 0, rect.width, rect.height); context.fillStyle = '#18233b'; context.fillRect(0, 0, rect.width, rect.height);
+  const positions = { west: [0, 2], north: [2, 0], east: [4, 2], south: [2, 4], hub: [2, 2] };
+  const hub = point(...positions.hub);
+  for (const route of routes()) { const from = point(...positions[route.from]); const to = point(...positions[route.to]); line(from, hub, palette[game[route.from]]); line(hub, to, palette[game[route.from]]); }
+  context.fillStyle = '#60739e'; context.fillRect(hub.x - scale * .35, hub.y - scale * .35, scale * .7, scale * .7);
+  context.strokeStyle = '#d5e0ff'; context.lineWidth = 3; context.strokeRect(hub.x - scale * .35, hub.y - scale * .35, scale * .7, scale * .7);
+  context.fillStyle = '#fff'; context.font = `900 ${Math.max(22, scale * .3)}px system-ui`; context.textAlign = 'center'; context.textBaseline = 'middle'; context.fillText('↻', hub.x, hub.y + 1);
+  crate(positions.west, game.west, 'IN'); crate(positions.north, game.north, 'IN');
+  dock(positions.east, game.east, 'DOCK'); dock(positions.south, game.south, 'DOCK');
+  context.fillStyle = '#b9c7e9'; context.font = `700 ${Math.max(12, scale * .15)}px system-ui`; context.textAlign = 'center'; context.fillText('TAP HUB', hub.x, hub.y + scale * .54);
 }
 
 function tap(event) {
-  if (!game || game.state !== 'playing') return;
-  const rect = canvas.getBoundingClientRect();
-  const x = event.clientX - rect.left; const y = event.clientY - rect.top;
-  for (const hub of game.hubs.values()) {
-    const at = point(hub.position);
-    if (Math.hypot(x - at.x, y - at.y) < scale * .43) {
-      hub.rotation = (hub.rotation + 1) % 4;
-      game.armed = true;
-      game.startedAt = performance.now();
-      lastTick = game.startedAt;
-      game.message = `Hub rotated. Every attached route changed.`;
-      updateHud(); draw();
-      return;
-    }
-  }
+  const rect = canvas.getBoundingClientRect(); const hub = point(2, 2);
+  if (Math.hypot(event.clientX - rect.left - hub.x, event.clientY - rect.top - hub.y) < scale * .48) rotateHub();
 }
 
-primaryAction.addEventListener('click', () => startLevel(game.state === 'won' && levelIndex < levels.length - 1 ? levelIndex + 1 : game.state === 'won' ? 0 : levelIndex));
-restart.addEventListener('click', () => startLevel(levelIndex));
+rotate.addEventListener('click', rotateHub);
+run.addEventListener('click', runRoutes);
+restart.addEventListener('click', () => start(boardIndex));
+primaryAction.addEventListener('click', () => start(game.state === 'won' && boardIndex < boards.length - 1 ? boardIndex + 1 : game.state === 'won' ? 0 : boardIndex));
 canvas.addEventListener('pointerdown', tap);
 window.addEventListener('resize', resize);
-
-async function boot() {
-  levels = await Promise.all(levelUrls.map(url => fetch(url).then(response => response.json())));
-  startLevel(0);
-  resize();
-  requestAnimationFrame(function frame(now) { tick(now); draw(); requestAnimationFrame(frame); });
-}
-
-boot().catch(error => { status.textContent = `Could not load levels: ${error.message}`; });
+start(0); resize();
