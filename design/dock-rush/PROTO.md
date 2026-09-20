@@ -151,13 +151,14 @@ See committed [levels/](levels/) for six authored levels.
 **Order of work (single session goal: playable in Editor):**
 
 1. Founder creates Unity project (see below). Add folder `Assets/Games/DockRush/`.
-2. Copy `design/dock-rush/levels/*.json` → `Assets/StreamingAssets/DockRush/Levels/`.
-3. Implement `DockGraph` + JSON loader; draw gizmos or quads at `position`.
-4. Implement movement tick + bay acceptance; verify level 1 win manually.
-5. Implement hub tap + rotation + edge activation.
-6. Implement deadlock checker; verify level 2 lose.
-7. Wire win/lose/restart/next UI.
-8. Play through all 6 levels; log notes in [PLAYTEST_LOG](../../docs/templates/PLAYTEST_LOG.md) (one file, do not expand OS).
+2. Run `pwsh -File tools/Validate-DockRushLevels.ps1` from the repository root. Fix schema errors before copying data.
+3. Copy `design/dock-rush/levels/*.json` → `Assets/StreamingAssets/DockRush/Levels/`.
+4. Implement `DockGraph` + JSON loader; draw gizmos or quads at `position`.
+5. Implement movement tick + bay acceptance; verify level 1 win manually.
+6. Implement hub tap + rotation + edge activation.
+7. Implement deadlock checker; verify level 2 lose.
+8. Wire win/lose/restart/next UI.
+9. Play through all 6 levels; log notes in [PLAYTEST_LOG](../../docs/templates/PLAYTEST_LOG.md) (one file, do not expand OS).
 
 **Estimated code size:** &lt;400–600 lines C# total if kept disciplined.
 
