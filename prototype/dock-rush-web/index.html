@@ -20,12 +20,16 @@
         <span id="status">Loading level…</span>
         <span id="queue"></span>
       </section>
+      <section id="controls">
+        <button id="rotate" type="button">Rotate hub</button>
+        <button id="run" type="button">Run routes</button>
+      </section>
       <section id="overlay" class="hidden" aria-live="assertive">
         <p id="result"></p>
         <button id="primary-action" type="button">Try again</button>
       </section>
       <footer>
-        Tap a hub. One rotation changes every connected route.
+        Plan first. Rotate shows both routes. Run sends both crates together.
       </footer>
     </main>
     <script src="app.js"></script>
