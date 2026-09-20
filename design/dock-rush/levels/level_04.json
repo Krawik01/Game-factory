@@ -5,7 +5,7 @@
   "nodes": [
     { "id": "spawn", "type": "spawn", "position": [0, 2] },
     { "id": "b0", "type": "bay", "position": [4, 2], "acceptColor": "Green", "acceptFacing": "West" },
-    { "id": "b1", "type": "bay", "position": [4, 0], "acceptColor": "Green", "acceptFacing": "South" },
+    { "id": "b1", "type": "bay", "position": [4, 0], "acceptColor": "Green", "acceptFacing": "East" },
     { "id": "pit", "type": "sink", "position": [2, 4] }
   ],
   "edges": [

@@ -1,10 +1,10 @@
 {
   "id": 1,
   "name": "First Wire",
-  "hubs": [{ "id": "h0", "position": [2, 2], "rotation": 0 }],
+  "hubs": [{ "id": "h0", "position": [2, 2], "rotation": 3 }],
   "nodes": [
     { "id": "spawn", "type": "spawn", "position": [0, 2] },
-    { "id": "b0", "type": "bay", "position": [4, 2], "acceptColor": "Red", "acceptFacing": "West" },
+    { "id": "b0", "type": "bay", "position": [4, 2], "acceptColor": "Red", "acceptFacing": "East" },
     { "id": "pit", "type": "sink", "position": [2, 4] }
   ],
   "edges": [

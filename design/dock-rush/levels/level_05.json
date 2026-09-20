@@ -8,7 +8,7 @@
   "nodes": [
     { "id": "spawn", "type": "spawn", "position": [0, 2] },
     { "id": "mid", "type": "junction", "position": [2, 2] },
-    { "id": "b0", "type": "bay", "position": [4, 2], "acceptColor": "Blue", "acceptFacing": "West" },
+    { "id": "b0", "type": "bay", "position": [4, 2], "acceptColor": "Blue", "acceptFacing": "East" },
     { "id": "pit", "type": "sink", "position": [3, 4] }
   ],
   "edges": [
