@@ -1,7 +1,7 @@
 :root {
   color-scheme: dark;
-  font-family: Inter, ui-rounded, system-ui, sans-serif;
-  background: #101727;
+  font-family: ui-rounded, "Avenir Next", Inter, system-ui, sans-serif;
+  background: #07111e;
   color: #f7f7fb;
 }
 
@@ -10,50 +10,57 @@
 body {
   margin: 0;
   min-height: 100dvh;
-  background: radial-gradient(circle at 50% -20%, #263964, #101727 55%);
+  background: linear-gradient(rgb(3 11 23 / .38), rgb(3 11 23 / .72)), url('assets/night-harbor.png') center / cover fixed;
 }
 
 main {
-  width: min(100%, 620px);
+  width: min(100%, 680px);
   min-height: 100dvh;
   margin: auto;
   padding: max(16px, env(safe-area-inset-top)) 18px max(20px, env(safe-area-inset-bottom));
   display: grid;
   grid-template-rows: auto 1fr auto auto;
-  gap: 14px;
+  gap: 12px;
+  text-shadow: 0 2px 12px #020915;
 }
 
 header, #hud { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 #controls { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-#controls button:first-child { background: #9eb0d5; }
+#controls button:first-child { background: linear-gradient(180deg, #9eb9df, #7187ad); }
 h1, p { margin: 0; }
-h1 { font-size: clamp(1.25rem, 5vw, 1.75rem); }
-.eyebrow { color: #9eb0d5; font-size: .67rem; font-weight: 800; letter-spacing: .11em; }
+h1 { font-size: clamp(1.35rem, 5vw, 1.85rem); letter-spacing: -.035em; }
+.eyebrow { color: #a6d9f2; font-size: .67rem; font-weight: 900; letter-spacing: .13em; }
 
 button {
   border: 0;
-  border-radius: 14px;
-  background: #f7d154;
-  color: #1b1c25;
-  padding: 11px 16px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #ffd76e, #e79c2c);
+  box-shadow: 0 7px 0 #8c5418, 0 10px 20px rgb(0 0 0 / .3);
+  color: #1b1720;
+  padding: 13px 16px;
   font: inherit;
   font-weight: 800;
   cursor: pointer;
+  transition: transform .12s ease, filter .12s ease;
 }
+button:active { transform: translateY(4px); box-shadow: 0 3px 0 #8c5418, 0 5px 12px rgb(0 0 0 / .28); }
+button:disabled { filter: grayscale(.75) brightness(.6); cursor: default; transform: none; box-shadow: 0 4px 0 #34445e; }
 
 canvas {
   display: block;
   width: 100%;
   aspect-ratio: 9 / 13;
-  border: 1px solid #405275;
-  border-radius: 28px;
-  background: #18233b;
+  border: 1px solid rgb(171 219 249 / .43);
+  border-radius: 30px;
+  background: linear-gradient(145deg, rgb(32 75 105 / .9), rgb(5 18 36 / .94));
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / .18), 0 20px 48px rgb(0 0 0 / .42);
   touch-action: manipulation;
 }
 
-#hud { min-height: 26px; color: #dce5ff; font-size: .9rem; }
-#queue { color: #9eb0d5; text-align: right; }
-footer { color: #8c9bbc; font-size: .78rem; text-align: center; }
+#hud { min-height: 40px; padding: 8px 12px; border: 1px solid rgb(177 217 255 / .2); border-radius: 14px; background: rgb(5 18 35 / .58); color: #eaf4ff; font-size: .84rem; }
+#hud > span:first-child { max-width: 54%; }
+#queue { color: #b9d5ef; text-align: right; font-size: .73rem; }
+footer { color: #d0e5f8; font-size: .76rem; text-align: center; }
 
 #overlay {
   position: fixed;
@@ -63,8 +70,8 @@ footer { color: #8c9bbc; font-size: .78rem; text-align: center; }
   gap: 16px;
   padding: 32px;
   text-align: center;
-  background: rgb(10 15 28 / .78);
-  backdrop-filter: blur(8px);
+  background: rgb(3 10 22 / .78);
+  backdrop-filter: blur(12px);
 }
-#overlay p { font-size: 1.45rem; font-weight: 850; }
+#overlay p { font-size: 1.45rem; font-weight: 850; max-width: 400px; }
 #overlay.hidden { display: none; }

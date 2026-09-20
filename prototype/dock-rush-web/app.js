@@ -73,20 +73,39 @@ function finish(won, message) {
 
 function runRoutes() {
   if (game.state !== 'planning') return;
-  const failed = routes().map(route => ({ crate: game[route.from], dock: game[route.to] })).find(item => item.crate !== item.dock);
-  if (failed) return finish(false, `${failed.crate} crate hit a ${failed.dock} dock. You could see that before running.`);
-  finish(true, 'Both routes landed. One decision solved two deliveries.');
+  game.outcome = routes().map(route => ({ ...route, crate: game[route.from], dock: game[route.to] }));
+  game.state = 'running'; game.progress = 0; updateHud();
+  const started = performance.now();
+  function animate(now) {
+    game.progress = Math.min(1, (now - started) / 760);
+    draw();
+    if (game.progress < 1) return requestAnimationFrame(animate);
+    const failed = game.outcome.find(item => item.crate !== item.dock);
+    if (failed) finish(false, `${failed.crate} container hit a ${failed.dock} dock. You could see that before sailing.`);
+    else finish(true, 'Clean delivery. One switch solved both routes.');
+  }
+  requestAnimationFrame(animate);
 }
 
 function line(a, b, color) {
   context.strokeStyle = color; context.lineWidth = 9; context.lineCap = 'round'; context.setLineDash([13, 10]);
-  context.beginPath(); context.moveTo(a.x, a.y); context.lineTo(b.x, b.y); context.stroke(); context.setLineDash([]);
+  context.shadowColor = color; context.shadowBlur = 15;
+  context.beginPath(); context.moveTo(a.x, a.y); context.lineTo(b.x, b.y); context.stroke(); context.setLineDash([]); context.shadowBlur = 0;
 }
 
 function crate(position, color, label) {
   const p = point(...position);
   context.fillStyle = palette[color]; context.fillRect(p.x - scale * .2, p.y - scale * .2, scale * .4, scale * .4);
   context.fillStyle = '#14203a'; context.font = `800 ${Math.max(11, scale * .14)}px system-ui`; context.textAlign = 'center'; context.textBaseline = 'middle'; context.fillText(label, p.x, p.y + 1);
+}
+
+function movingCrate(route, positions) {
+  const source = point(...positions[route.from]); const hub = point(...positions.hub); const target = point(...positions[route.to]);
+  const t = game.progress < .5 ? game.progress * 2 : (game.progress - .5) * 2;
+  const start = game.progress < .5 ? source : hub; const end = game.progress < .5 ? hub : target;
+  const x = start.x + (end.x - start.x) * t; const y = start.y + (end.y - start.y) * t;
+  context.fillStyle = palette[route.crate]; context.shadowColor = palette[route.crate]; context.shadowBlur = 22;
+  context.fillRect(x - scale * .2, y - scale * .2, scale * .4, scale * .4); context.shadowBlur = 0;
 }
 
 function dock(position, color, label) {
@@ -104,7 +123,8 @@ function draw() {
   context.fillStyle = '#60739e'; context.fillRect(hub.x - scale * .35, hub.y - scale * .35, scale * .7, scale * .7);
   context.strokeStyle = '#d5e0ff'; context.lineWidth = 3; context.strokeRect(hub.x - scale * .35, hub.y - scale * .35, scale * .7, scale * .7);
   context.fillStyle = '#fff'; context.font = `900 ${Math.max(22, scale * .3)}px system-ui`; context.textAlign = 'center'; context.textBaseline = 'middle'; context.fillText('↻', hub.x, hub.y + 1);
-  crate(positions.west, game.west, 'IN'); crate(positions.north, game.north, 'IN');
+  if (game.state === 'running') game.outcome.forEach(route => movingCrate(route, positions));
+  else { crate(positions.west, game.west, 'IN'); crate(positions.north, game.north, 'IN'); }
   dock(positions.east, game.east, 'DOCK'); dock(positions.south, game.south, 'DOCK');
   context.fillStyle = '#b9c7e9'; context.font = `700 ${Math.max(12, scale * .15)}px system-ui`; context.textAlign = 'center'; context.fillText('TAP HUB', hub.x, hub.y + scale * .54);
 }
