@@ -89,6 +89,9 @@ namespace GameFactory.DockRush
         private ScreenState state;
         private string status = "Ustaw sieć dla pierwszej skrzyni.";
         private float pulse;
+        private float dispatchProgress;
+        private List<int> activePath;
+        private Cargo activeCargo;
         private GUIStyle titleStyle;
         private GUIStyle labelStyle;
         private GUIStyle centerStyle;
@@ -114,7 +117,11 @@ namespace GameFactory.DockRush
             LoadLevel(0);
         }
 
-        private void Update() { pulse += Time.deltaTime; }
+        private void Update()
+        {
+            pulse += Time.deltaTime;
+            if (state == ScreenState.Dispatching) dispatchProgress = Mathf.Clamp01(dispatchProgress + Time.deltaTime / .72f);
+        }
 
         private void LoadLevel(int index)
         {
@@ -123,6 +130,8 @@ namespace GameFactory.DockRush
             cargoIndex = 0;
             delivered = 0;
             state = ScreenState.Planning;
+            activePath = null;
+            activeCargo = null;
             status = "Sieć gotowa. Sprawdź trasę podglądu.";
         }
 
@@ -163,9 +172,14 @@ namespace GameFactory.DockRush
         {
             state = ScreenState.Dispatching;
             var cargo = levels[levelIndex].Queue[cargoIndex];
+            activeCargo = cargo;
+            activePath = PreviewPath(cargo);
+            dispatchProgress = 0f;
             status = "Ładunek jest w drodze…";
-            yield return new WaitForSeconds(.42f);
+            yield return new WaitForSeconds(.74f);
             int dock = ResolveDock(cargo);
+            activeCargo = null;
+            activePath = null;
             if (levels[levelIndex].Docks[dock] != cargo.Color)
             {
                 status = "Zły dok: ten ładunek nie ma gdzie wylądować.";
@@ -320,6 +334,18 @@ namespace GameFactory.DockRush
                 GUI.color = new Color(Glow.r, Glow.g, Glow.b, .72f);
                 for (int i = 0; i < path.Count - 1; i++) DrawLine(p[path[i]], p[path[i + 1]], 5f);
                 DrawLine(p[path[path.Count - 1]], dockPoints[ResolveDock(levels[levelIndex].Queue[cargoIndex])], 5f);
+            }
+
+            if (activeCargo != null && activePath != null)
+            {
+                var points = new List<Vector2>();
+                foreach (int node in activePath) points.Add(p[node]);
+                points.Add(dockPoints[ResolveDock(activeCargo)]);
+                float scaled = dispatchProgress * (points.Count - 1);
+                int segment = Mathf.Min(Mathf.FloorToInt(scaled), points.Count - 2);
+                Vector2 cargoPosition = Vector2.Lerp(points[segment], points[segment + 1], scaled - segment);
+                Circle(cargoPosition, 19f, CargoPalette[(int)activeCargo.Color]);
+                GUI.Label(new Rect(cargoPosition.x - 12, cargoPosition.y - 12, 24, 24), "◆", centerStyle);
             }
 
             for (int dock = 0; dock < 3; dock++)

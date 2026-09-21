@@ -29,5 +29,13 @@ namespace GameFactory.DockRush
             Directory.CreateDirectory("Builds/Android");
             BuildPipeline.BuildPlayer(new[] { ScenePath }, "Builds/Android/DockRush.apk", BuildTarget.Android, BuildOptions.Development);
         }
+
+        public static void BuildWindows()
+        {
+            PreparePlayableScene();
+            EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.Standalone, BuildTarget.StandaloneWindows64);
+            Directory.CreateDirectory("Builds/Windows");
+            BuildPipeline.BuildPlayer(new[] { ScenePath }, "Builds/Windows/DockRush.exe", BuildTarget.StandaloneWindows64, BuildOptions.Development);
+        }
     }
 }
