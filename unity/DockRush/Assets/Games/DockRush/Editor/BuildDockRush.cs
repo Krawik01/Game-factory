@@ -1,0 +1,33 @@
+using System.IO;
+using UnityEditor;
+using UnityEditor.SceneManagement;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+namespace GameFactory.DockRush
+{
+    /// <summary>Small build helper for this one experiment; it is not shared studio infrastructure.</summary>
+    public static class BuildDockRush
+    {
+        private const string ScenePath = "Assets/Games/DockRush/Scenes/DockRush.unity";
+
+        [MenuItem("Dock Rush/Prepare playable scene")]
+        public static void PreparePlayableScene()
+        {
+            Directory.CreateDirectory("Assets/Games/DockRush/Scenes");
+            if (File.Exists(ScenePath)) return;
+            var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+            EditorSceneManager.SaveScene(scene, ScenePath);
+            AssetDatabase.Refresh();
+        }
+
+        [MenuItem("Dock Rush/Build Android APK")]
+        public static void BuildAndroid()
+        {
+            PreparePlayableScene();
+            EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.Android, BuildTarget.Android);
+            Directory.CreateDirectory("Builds/Android");
+            BuildPipeline.BuildPlayer(new[] { ScenePath }, "Builds/Android/DockRush.apk", BuildTarget.Android, BuildOptions.Development);
+        }
+    }
+}

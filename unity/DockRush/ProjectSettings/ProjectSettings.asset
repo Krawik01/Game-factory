@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!129 &1
+PlayerSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 26
+  companyName: Game Factory
+  productName: Dock Rush
+  defaultScreenWidth: 1080
+  defaultScreenHeight: 1920
+  defaultScreenWidthWeb: 1080
+  defaultScreenHeightWeb: 1920
+  m_ActiveColorSpace: 0
+  useOSAutorotation: 0
+  defaultInterfaceOrientation: 1
+  targetDevice: 2
+  androidSupportedAspectRatio: 1
+  androidMaxAspectRatio: 2.4
+  androidMinSdkVersion: 23
+  androidTargetSdkVersion: 0
+  iOSLaunchScreenType: 0
+  iOSLaunchScreenFillPct: 100
+  iOSLaunchScreenSize: 100
+  iOSLaunchScreenCustomXibPath: 
+  iOSLaunchScreenBackgroundColor:
+    serializedVersion: 2
+    rgba: 0
+  iOSLaunchScreenFill: 1
+  iOSLaunchScreenCustomStoryboardPath: 
+  bundleVersion: 0.1.0
+  AndroidBundleVersionCode: 1
+  applicationIdentifier:
+    Android: com.gamefactory.dockrush
+    Standalone: com.GameFactory.DockRush
+  usePlayerLog: 1
+  runInBackground: 1
+  useFlipModelSwapchain: 1
+  switchMaxWorkerMultiple: 8
+  switchQueueCommandMemory: 1048576
+  switchQueueControlMemory: 16384
