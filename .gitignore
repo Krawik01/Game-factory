@@ -15,4 +15,4 @@ Recordings/
 *.pidb
 *.booproj
 *.unityproj
-unity-*.log
+unity*.log
