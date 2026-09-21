@@ -1,5 +1,6 @@
 using System.IO;
 using UnityEditor;
+using UnityEditor.Build.Reporting;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -36,6 +37,30 @@ namespace GameFactory.DockRush
             EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.Standalone, BuildTarget.StandaloneWindows64);
             Directory.CreateDirectory("Builds/Windows");
             BuildPipeline.BuildPlayer(new[] { ScenePath }, "Builds/Windows/DockRush.exe", BuildTarget.StandaloneWindows64, BuildOptions.Development);
+        }
+
+        [MenuItem("Dock Rush/Build iOS Xcode Project")]
+        public static void BuildIOS()
+        {
+            PreparePlayableScene();
+
+            if (EditorUserBuildSettings.activeBuildTarget != BuildTarget.iOS &&
+                !EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.iOS, BuildTarget.iOS))
+            {
+                throw new System.InvalidOperationException("Could not switch Unity to the iOS build target.");
+            }
+
+            Directory.CreateDirectory("Builds");
+            var report = BuildPipeline.BuildPlayer(
+                new[] { ScenePath },
+                "Builds/iOS",
+                BuildTarget.iOS,
+                BuildOptions.None);
+
+            if (report.summary.result != BuildResult.Succeeded)
+            {
+                throw new System.InvalidOperationException("Dock Rush iOS export failed. See the Unity build report for details.");
+            }
         }
     }
 }
