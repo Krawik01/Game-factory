@@ -1,0 +1,18 @@
+# Unity-generated project state; source assets and settings remain versioned.
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+MemoryCaptures/
+Recordings/
+.vs/
+*.csproj
+*.sln
+*.user
+*.pidb
+*.booproj
+*.unityproj
+unity*.log

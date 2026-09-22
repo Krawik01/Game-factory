@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Dock Rush — mechanic prototype</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <main>
+      <header>
+        <div>
+          <p class="eyebrow">DOCK RUSH · NIGHT SHIFT</p>
+          <h1 id="level-name">Loading</h1>
+        </div>
+        <button id="restart" type="button">Restart</button>
+      </header>
+      <canvas id="game" aria-label="Dock Rush game board"></canvas>
+      <section id="hud" aria-live="polite">
+        <span id="status">Loading level…</span>
+        <span id="queue"></span>
+      </section>
+      <section id="controls">
+        <button id="rotate" type="button">Rotate hub</button>
+        <button id="run" type="button">Run routes</button>
+      </section>
+      <section id="overlay" class="hidden" aria-live="assertive">
+        <p id="result"></p>
+        <button id="primary-action" type="button">Try again</button>
+      </section>
+      <footer>
+        Read the routes. One switch controls both containers.
+      </footer>
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>

@@ -1,10 +1,10 @@
 # Dock Rush — Stage 3 prototype pack (Candidate #001)
 
-**Status:** HYPOTHESIS — not an approved product.  
-**Purpose:** Cheapest playable experiment to learn if the shared-graph mechanic is fun.  
+**Status:** ITERATE (2026-09-20) — first browser playtest: fun 2/10; goal and decisions were not immediately clear.
+**Purpose:** One focused redesign of the shared-graph loop. Do not add content or polish to the current auto-run version; see the playtest lesson below.
 **Stage 2 source:** [../../docs/knowledge-base/concepts/dock-rush-spec.md](../../docs/knowledge-base/concepts/dock-rush-spec.md)
 
-No Unity project exists in this repo yet. **Do not implement gameplay code until the founder creates a project in the Editor** (see [Unity setup](#unity-setup-founder)).
+No Unity project exists in this repo yet. The small browser proof at [../../prototype/dock-rush-web/](../../prototype/dock-rush-web/) is allowed solely to test the mechanic before the Editor is available; it is not a second product or a replacement for the Unity prototype.
 
 ---
 
@@ -16,7 +16,7 @@ No Unity project exists in this repo yet. **Do not implement gameplay code until
 - **Hubs** are tap targets. Each tap rotates that hub **90° clockwise**.
 - A hub defines which **edges** are active for its current rotation (0–3). Rotating the hub can change **every** route that passes through it in one action.
 - Crates **auto-advance** along active directed edges at a fixed tick (e.g. every 0.25–0.4s). No drag-to-move.
-- A **bay** removes a crate only when **color** and **crate facing** (direction of travel into the bay) match `acceptColor` and `acceptFacing`.
+- A **bay** removes a crate only when **color** and the crate's visible **facing mark** match `acceptColor` and `acceptFacing`.
 
 ### Board representation (prototype)
 
@@ -90,7 +90,7 @@ Author in JSON under [levels/](levels/). Copy into Unity `StreamingAssets/DockRu
 
 - `position` is grid coordinates for layout only (portrait-friendly aspect).
 - Edges that leave a hub must set `hub` + `activeAtRotation` (which hub rotations enable this exit).
-- `facing` on a crate is the direction of travel when entering a bay (`North` | `East` | `South` | `West`).
+- `facing` is a fixed directional mark carried by a crate from spawn; it does not change while the crate moves (`North` | `East` | `South` | `West`). A bay must show the same mark.
 - Colors: `Red`, `Green`, `Blue`, `Yellow` (proto palette).
 
 See committed [levels/](levels/) for six authored levels.
@@ -140,7 +140,7 @@ See committed [levels/](levels/) for six authored levels.
 1. One hub, one color — learn tap rewires path  
 2. Wrong rotation sends crate to sink — learn fail  
 3. Two crates, same hub — order matters  
-4. Color + facing — bay rejects wrong facing  
+4. Color + facing — select the bay with the matching mark
 5. Two hubs — one tap affects multiple routes  
 6. Near-deadlock — one rotation saves run  
 
@@ -167,6 +167,8 @@ See committed [levels/](levels/) for six authored levels.
 ---
 
 ## 4. Prototype success / kill gate
+
+**Result (2026-09-20): ITERATE.** One first-player browser session reported that the goal was not immediately understandable, the levels felt weak, and fun was **2/10**. The current auto-run implementation is rejected. Run one focused turn-based shared-graph redesign before deciding whether to kill the core.
 
 Answer after founder playtest (~10 minutes, all levels). Use [PLAYTEST_LOG](../../docs/templates/PLAYTEST_LOG.md).
 

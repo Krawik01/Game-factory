@@ -6,13 +6,13 @@ Living memory. Read this before designing a new game. Update it after every Stag
 
 | Codename | Stage | Last decision | Artifact |
 |----------|-------|---------------|----------|
-| Dock Rush | 3 — Prototype prep (hypothesis) | CONTINUE to playable experiment; no Unity in repo | [../../design/dock-rush/PROTO.md](../../design/dock-rush/PROTO.md) |
+| Dock Rush | 3 — First playable tested | ITERATE — auto-run loop failed; test turn-based shared graph | [first-playtest lesson](lessons/2026-09-dock-rush-first-playtest.md) |
 
 ## Tested concepts
 
 | Codename | Stage reached | Decision | Notes |
 |----------|---------------|----------|--------|
-| Dock Rush | 3 prep | Hypothesis | JSON levels authored; gameplay not implemented |
+| Dock Rush | 3 playable | ITERATE | Browser auto-run prototype: unclear goal, weak levels, fun 2/10. Test one turn-based board; do not polish or port current version. |
 | Tilt Sort | 1 | Backup | See [2026-09-ideation.md](concepts/2026-09-ideation.md) |
 | Fuse Line | 1 | Not recommended | |
 | Stack Pulse | 1 | Not recommended | Fairness / tuning risk |
@@ -21,7 +21,7 @@ Living memory. Read this before designing a new game. Update it after every Stag
 
 | Mechanic | Where learned | Reuse? |
 |----------|---------------|--------|
-| — | No playtests yet | |
+| Shared-graph hub rotation | Dock Rush first playable (2026-09-20) | Do not assume a routing rewire is inherently satisfying; prove immediate cause/effect before authoring content. Test it turn-based before rejecting. |
 
 ## Failed mechanics
 
@@ -63,6 +63,7 @@ See [tech/GAMEFACTORY_CORE_ROADMAP.md](tech/GAMEFACTORY_CORE_ROADMAP.md). **No C
 | Date | Lesson | File |
 |------|--------|------|
 | 2026-09 | OS first. No unverified Unity skeleton. No framework-for-later. Differentiation is a rule, not a reskin. | [lessons/2026-09-kickoff-plan-correction.md](lessons/2026-09-kickoff-plan-correction.md) |
+| 2026-09-20 | Dock Rush auto-run loop was unclear and scored fun 2/10. One turn-based shared-graph iteration is allowed; no polish. | [lessons/2026-09-dock-rush-first-playtest.md](lessons/2026-09-dock-rush-first-playtest.md) |
 
 ## Metrics benchmarks
 
