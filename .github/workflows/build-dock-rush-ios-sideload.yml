@@ -1,0 +1,82 @@
+name: Package Dock Rush iOS IPA (sideload)
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_asset_api_url:
+        description: Draft-release asset URL for the Unity-generated Xcode archive
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  build-unsigned-ipa:
+    name: Package unsigned iPhone IPA
+    runs-on: macos-15-intel
+    timeout-minutes: 60
+
+    steps:
+      - name: Download the Unity-generated Xcode project
+        shell: bash
+        env:
+          SOURCE_ASSET_API_URL: ${{ inputs.source_asset_api_url }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          case "$SOURCE_ASSET_API_URL" in
+            https://api.github.com/repos/Krawik01/Game-factory/releases/assets/*) ;;
+            *)
+              echo "::error::The source archive must be an asset in this repository."
+              exit 1
+              ;;
+          esac
+
+          mkdir -p "$RUNNER_TEMP/DockRushXcode"
+          curl --fail --location --retry 3 \
+            -H "Accept: application/octet-stream" \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            "$SOURCE_ASSET_API_URL" \
+            --output "$RUNNER_TEMP/DockRushXcode.zip"
+          unzip -q "$RUNNER_TEMP/DockRushXcode.zip" -d "$RUNNER_TEMP/DockRushXcode"
+
+      - name: Compile and package an unsigned IPA
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          export_path="$RUNNER_TEMP/DockRushXcode"
+          derived_data="$RUNNER_TEMP/DockRushDerivedData"
+          output_dir="$RUNNER_TEMP/DockRushOutput"
+
+          xcodebuild -version
+          find "$export_path" -type f -name "*.sh" -exec chmod +x {} +
+          xcodebuild \
+            -project "$export_path/Unity-iPhone.xcodeproj" \
+            -scheme Unity-iPhone \
+            -configuration Release \
+            -sdk iphoneos \
+            -derivedDataPath "$derived_data" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            build
+
+          app_path="$derived_data/Build/Products/Release-iphoneos/Unity-iPhone.app"
+          test -d "$app_path"
+          mkdir -p "$output_dir/Payload"
+          ditto "$app_path" "$output_dir/Payload/Unity-iPhone.app"
+          (
+            cd "$output_dir"
+            ditto -c -k --sequesterRsrc --keepParent Payload DockRush-unsigned.ipa
+          )
+
+      - name: Keep the IPA for SideStore
+        uses: actions/upload-artifact@v4
+        with:
+          name: DockRush-unsigned-ipa
+          path: ${{ runner.temp }}/DockRushOutput/DockRush-unsigned.ipa
+          if-no-files-found: error
+          retention-days: 7
